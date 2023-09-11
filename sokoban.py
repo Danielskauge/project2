@@ -171,6 +171,15 @@ class Warehouse:
     def __hash__(self):
         return hash(self.worker) ^ functools.reduce(operator.xor, [hash(box) for box in self.boxes])
     
+    def is_in_warehouse(self,cell):
+        min_x = min(wall[0] for wall in self.walls)
+        max_x = max(wall[0] for wall in self.walls)
+        min_y = min(wall[1] for wall in self.walls)
+        max_y = max(wall[1] for wall in self.walls)
+
+        x, y = cell
+        return min_x <= x <= max_x and min_y <= y <= max_y
+    
 if __name__ == "__main__":
     wh = Warehouse()
     wh.load_warehouse("./warehouses/warehouse_03.txt")
