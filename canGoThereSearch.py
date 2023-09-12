@@ -2,12 +2,12 @@ import search
 from collections import namedtuple
 
 class CanGoThereSearch(search.Problem):  # Or SokobanPuzzle
-    def __init__(self, warehouse_instance, target_position):
+    def __init__(self, warehouse, target_position):
         State = namedtuple('State', ['walls', 'boxes', 'worker'])
         self.state = State(
-            walls=warehouse_instance.walls,
-            boxes=warehouse_instance.boxes,
-            worker=warehouse_instance.worker
+            walls=tuple(warehouse.walls),
+            boxes=tuple(warehouse.boxes),
+            worker=tuple(warehouse.worker),
         )
         self.target_position = target_position
         super().__init__(self.state,self.target_position)
