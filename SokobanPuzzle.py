@@ -30,7 +30,7 @@ class SokobanPuzzle(search.Problem):
     
     
     '''
-    def __init__(self, warehouse,allow_taboo_push=False,macro=True):
+    def __init__(self, warehouse,allow_taboo_push=True,macro=True):
         State = namedtuple('State', ['walls', 'boxes', 'targets','worker'])
         self.state = State(
             walls=tuple(warehouse.walls),
@@ -78,7 +78,7 @@ class SokobanPuzzle(search.Problem):
         return actions
 
     def is_valid_macro_action(self, box, dir, state):
-        candidate_cell = self.get_candidate_cell(box, dir)
+        candidate_cell = self.get_neighbor_cell_in_direction(box, dir)
         if not self.warehouse.is_in_warehouse(candidate_cell):
             return False
         if candidate_cell in state.walls or candidate_cell in state.boxes:
@@ -97,13 +97,13 @@ class SokobanPuzzle(search.Problem):
         return actions
 
     def is_valid_elementary_action(self, worker, dir, state):
-        candidate_cell = self.get_candidate_cell(worker, dir)
+        candidate_cell = self.get_neighbor_cell_in_direction(worker, dir)
         if not self.warehouse.is_in_warehouse(candidate_cell):
             return False
         if candidate_cell in state.walls:
             return False
         if candidate_cell in state.boxes:
-            beyond_box_pos = self.get_candidate_cell(candidate_cell, dir)
+            beyond_box_pos = self.get_neighbor_cell_in_direction(candidate_cell, dir)
             return self.is_push_possible(beyond_box_pos, state)
         return True
 
@@ -111,12 +111,12 @@ class SokobanPuzzle(search.Problem):
         return not (beyond_box_pos in state.boxes or beyond_box_pos in state.walls or
                     (beyond_box_pos in self.taboo_cells and not self.allow_taboo_push))
     
-    def get_candidate_cell(self, box,dir):
+    def get_neighbor_cell_in_direction(self,cell,dir):
         return {
-                'left': (box[0]-1,box[1]),
-                'right': (box[0]+1,box[1]),
-                'up': (box[0],box[1]-1),
-                'down': (box[0],box[1]+1)
+                'left': (cell[0]-1,cell[1]),
+                'right': (cell[0]+1,cell[1]),
+                'up': (cell[0],cell[1]-1),
+                'down': (cell[0],cell[1]+1)
             }.get(dir)
     
     def get_worker_push_position(self, box,dir):
@@ -127,5 +127,31 @@ class SokobanPuzzle(search.Problem):
             'down': (box[0],box[1]-1)
         }.get(dir)
     
-    def result(self, state, action):
-        raise(NotImplementedError)
+    def result(self, action):
+        return self.macro_result(action) if self.macro else self.elem_result(action)
+        #dont think it should alter state attribute
+    
+    def macro_result(self, action):
+        box_to_move_coords, direction = action
+        new_boxes_coords = self.update_boxes_coords(box_to_move_coords, direction)
+        new_worker_coords = box_to_move_coords  # Assuming this is defined based on the box moved
+        return self.state._replace(boxes=new_boxes_coords, worker=new_worker_coords)
+
+    def elem_result(self, action):
+        direction = action
+        new_worker_coords = self.update_worker_coords(direction)
+        
+        if new_worker_coords in self.state.boxes:
+            new_boxes_coords = self.update_boxes_coords(new_worker_coords, direction)
+        else:
+            new_boxes_coords = self.state.boxes
+            
+        return self.state._replace(boxes=new_boxes_coords, worker=new_worker_coords)
+
+    def update_boxes_coords(self, old_box_coords, direction):
+        new_box_coords = self.get_neighbor_cell_in_direction(old_box_coords, direction)
+        box_index = self.state.boxes.index(old_box_coords)
+        return tuple(new_box_coords if i == box_index else box for i, box in enumerate(self.state.boxes))
+
+    def update_worker_coords(self, direction):
+        return self.get_neighbor_cell_in_direction(self.state.worker, direction)
