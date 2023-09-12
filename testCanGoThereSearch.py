@@ -23,12 +23,6 @@ class TestCanGoThereSearch(unittest.TestCase):
         # Target position
         self.target_position = (3, 1)
 
-
-        
-
-
-
-
     def test_can_go_there(self):
         self.warehouse.boxes = ((3, 1),)
         self.target_position = (2, 1)

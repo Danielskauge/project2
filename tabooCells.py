@@ -1,3 +1,5 @@
+from sokoban import find_2D_iterator
+
 def taboo_cells(warehouse):
         '''  
     Identify the taboo cells of a warehouse. A cell inside a warehouse is 
@@ -36,20 +38,27 @@ def taboo_cells(warehouse):
 
         return warehouse_grid_to_string(warehouse_grid)
 
+def get_taboo_cells_positions(warehouse):
+    taboo_cells_string = taboo_cells(warehouse)
+    taboo_cells_lines = taboo_cells_string.split('\n')
+    positions_generator = find_2D_iterator(taboo_cells_lines, 'X')
+    return tuple(positions_generator)
+
+
      
 def is_corner(x, y, warehouse_grid):
-    if not is_within_bounds(x, y, warehouse_grid):
+    if not is_within_grid(x, y, warehouse_grid):
         return False
     if warehouse_grid[y][x] == '#':
         return False
 
-    top = is_within_bounds(
+    top = is_within_grid(
         x, y-1, warehouse_grid) and warehouse_grid[y-1][x] == '#'
-    bottom = is_within_bounds(
+    bottom = is_within_grid(
         x, y+1, warehouse_grid) and warehouse_grid[y+1][x] == '#'
-    left = is_within_bounds(
+    left = is_within_grid(
         x-1, y, warehouse_grid) and warehouse_grid[y][x-1] == '#'
-    right = is_within_bounds(
+    right = is_within_grid(
         x+1, y, warehouse_grid) and warehouse_grid[y][x+1] == '#'
 
     return (top and left) or (top and right) or (bottom and left) or (bottom and right)
@@ -85,14 +94,14 @@ def range_between_corners(x, y, axis, warehouse_grid):
 
     if axis == 'x':
         for dx in range(x, -1, -1):
-            if not is_within_bounds(dx, y, warehouse_grid):
+            if not is_within_grid(dx, y, warehouse_grid):
                 break
             if is_corner(dx, y, warehouse_grid):
                 left_corner = dx
                 break
 
         for dx in range(x, len(warehouse_grid[0])):
-            if not is_within_bounds(dx, y, warehouse_grid):
+            if not is_within_grid(dx, y, warehouse_grid):
                 break
             if is_corner(dx, y, warehouse_grid):
                 right_corner = dx
@@ -100,14 +109,14 @@ def range_between_corners(x, y, axis, warehouse_grid):
 
     elif axis == 'y':
         for dy in range(y, -1, -1):
-            if not is_within_bounds(x, dy, warehouse_grid):
+            if not is_within_grid(x, dy, warehouse_grid):
                 break
             if is_corner(x, dy, warehouse_grid):
                 top_corner = dy
                 break
 
         for dy in range(y, len(warehouse_grid)):
-            if not is_within_bounds(x, dy, warehouse_grid):
+            if not is_within_grid(x, dy, warehouse_grid):
                 break
             if is_corner(x, dy, warehouse_grid):
                 bottom_corner = dy
@@ -159,28 +168,28 @@ def between_vertical_corners(x, y, warehouse_grid):
 
 
 def is_continuous_wall_top(x,y, x_range, warehouse_grid):
-    if not is_within_bounds(x,y-1,warehouse_grid): 
+    if not is_within_grid(x,y-1,warehouse_grid): 
         return False
     else:
         return all(warehouse_grid[y-1][dx] == '#' for dx in x_range)
 
 
 def is_continuous_wall_bottom(x,y, x_range, warehouse_grid):
-    if not is_within_bounds(x,y+1,warehouse_grid): 
+    if not is_within_grid(x,y+1,warehouse_grid): 
         return False
     else:
         return all(warehouse_grid[y+1][dx] == '#' for dx in x_range)
 
 
 def is_continuous_wall_left(x,y,y_range, warehouse_grid):
-    if not is_within_bounds(x-1,y,warehouse_grid): 
+    if not is_within_grid(x-1,y,warehouse_grid): 
         return False
     else:
         return all(warehouse_grid[dy][x-1] == '#' for dy in y_range)
 
 
 def is_continuous_wall_right(x,y,y_range, warehouse_grid):
-    if not is_within_bounds(x+1,y,warehouse_grid): 
+    if not is_within_grid(x+1,y,warehouse_grid): 
         return False
     else:
         return all(warehouse_grid[dy][x+1] == '#' for dy in y_range)
@@ -206,5 +215,5 @@ def warehouse_grid_to_string(warehouse_grid):
     return warehouse_string
 
 
-def is_within_bounds(x, y, warehouse_grid):
+def is_within_grid(x, y, warehouse_grid):
     return 0 <= x < len(warehouse_grid[0]) and 0 <= y < len(warehouse_grid)
