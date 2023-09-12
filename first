@@ -1,0 +1,12 @@
+helo
+arbeidsfordeling
+
+Erlend:
+- my_team()
+– check action seq(): 3 marks
+– solve sokoban elem(): 3 marks + 1 mark for solver optimality
+
+- rapport
+
+Danni:
+– solve sokoban macro(): 3 marks + 1 mark for solver optimality
