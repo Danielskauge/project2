@@ -158,4 +158,40 @@ class SokobanPuzzle(search.Problem):
     def update_worker_coords(self, state, direction):
         return self.get_neighbor_cell_in_direction(state.worker, direction)
     
-    #def heurustic(self, state, goal):
+    def manhattan_distance(self,coord1, coord2):
+        """
+        Calculate the Manhattan distance between two coordinates.
+        
+        Parameters:
+        - coord1: tuple, (x1, y1)
+        - coord2: tuple, (x2, y2)
+        
+        Returns:
+        - int: Manhattan distance
+        """
+        return abs(coord1[0] - coord2[0]) + abs(coord1[1] - coord2[1])
+    
+    def h(self, node):
+        """
+        Calculate the generalized Manhattan distance as the heuristic function h.
+        
+        Parameters:
+        - boxes: tuple of tuples, each containing (x, y) coordinates for boxes
+        - targets: tuple of tuples, each containing (x, y) coordinates for targets
+        
+        Returns:
+        - int: Generalized Manhattan distance
+        """
+        boxes = node.state.boxes
+        targets = node.state.targets
+
+        total_distance = 0
+        
+        for box in boxes:
+            min_distance_to_any_target = float('inf')
+            for target in targets:
+                distance = self.manhattan_distance(box, target)
+                min_distance_to_any_target = min(min_distance_to_any_target, distance)
+            total_distance += min_distance_to_any_target
+        
+        return total_distance
