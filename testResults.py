@@ -22,7 +22,7 @@ class TestSokobanResultFunction(unittest.TestCase):
         initial_state = self.sokoban1.state
         action = ((3, 4), 'right')
         
-        new_state = self.sokoban1.result(action)
+        new_state = self.sokoban1.result(initial_state,action)
         
         self.assertNotEqual(initial_state, new_state)
         self.assertNotIn((3, 4), new_state.boxes)
@@ -35,7 +35,7 @@ class TestSokobanResultFunction(unittest.TestCase):
         initial_state = self.sokoban2.state
         action = ((6, 2), 'left')
         
-        new_state = self.sokoban2.result(action)
+        new_state = self.sokoban2.result(initial_state,action)
         
         self.assertNotEqual(initial_state, new_state)
         self.assertNotIn((6, 2), new_state.boxes)
@@ -50,7 +50,7 @@ class TestSokobanResultFunction(unittest.TestCase):
         
         expected_new_worker_position = self.sokoban1.get_neighbor_cell_in_direction(initial_state.worker, action)
         
-        new_state = self.sokoban1.result(action)
+        new_state = self.sokoban1.result(initial_state,action)
         
         self.assertEqual(expected_new_worker_position, new_state.worker)  # Assert exact expected value
 
@@ -61,7 +61,7 @@ class TestSokobanResultFunction(unittest.TestCase):
         
         expected_new_worker_position = self.sokoban2.get_neighbor_cell_in_direction(initial_state.worker, action)
         
-        new_state = self.sokoban2.result(action)
+        new_state = self.sokoban2.result(initial_state,action)
         
         self.assertEqual(expected_new_worker_position, new_state.worker)  # Assert exact expected value
 
@@ -72,7 +72,7 @@ class TestSokobanResultFunction(unittest.TestCase):
         initial_state = self.sokoban1.state
         action = 'left'
         
-        new_state = self.sokoban1.result(action)
+        new_state = self.sokoban1.result(initial_state,action)
         
         self.assertNotEqual(initial_state, new_state)
         self.assertNotIn((4, 4), new_state.boxes)
@@ -84,7 +84,7 @@ class TestSokobanResultFunction(unittest.TestCase):
         initial_state = self.sokoban2.state
         action = 'left'
         
-        new_state = self.sokoban2.result(action)
+        new_state = self.sokoban2.result(initial_state, action)
         
         self.assertNotEqual(initial_state, new_state)
         self.assertNotIn((7, 2), new_state.boxes)
