@@ -39,12 +39,15 @@ class SokobanPuzzle(search.Problem):
             worker=tuple(warehouse.worker)
         )
 
-        
-        super().__init__(self.state, warehouse.targets)
+        super().__init__(initial=self.state, goal=tuple(warehouse.targets))
         self.allow_taboo_push = allow_taboo_push
         self.taboo_cells = get_taboo_cells_positions(warehouse)
         self.macro = macro
         self.warehouse = warehouse
+
+    def goal_test(self, state):
+        return set(state.boxes) == set(self.goal)
+
 
     def actions(self, state):
         """
@@ -127,31 +130,32 @@ class SokobanPuzzle(search.Problem):
             'down': (box[0],box[1]-1)
         }.get(dir)
     
-    def result(self, action):
-        return self.macro_result(action) if self.macro else self.elem_result(action)
-        #dont think it should alter state attribute
-    
-    def macro_result(self, action):
+    def result(self, state, action):
+        return self.macro_result(state, action) if self.macro else self.elem_result(state, action)
+
+    def macro_result(self, state, action):
         box_to_move_coords, direction = action
-        new_boxes_coords = self.update_boxes_coords(box_to_move_coords, direction)
-        new_worker_coords = box_to_move_coords  # Assuming this is defined based on the box moved
-        return self.state._replace(boxes=new_boxes_coords, worker=new_worker_coords)
+        new_boxes_coords = self.update_boxes_coords(state, box_to_move_coords, direction)
+        new_worker_coords = box_to_move_coords
+        return state._replace(boxes=new_boxes_coords, worker=new_worker_coords)
 
-    def elem_result(self, action):
+    def elem_result(self, state, action):
         direction = action
-        new_worker_coords = self.update_worker_coords(direction)
-        
-        if new_worker_coords in self.state.boxes:
-            new_boxes_coords = self.update_boxes_coords(new_worker_coords, direction)
+        new_worker_coords = self.update_worker_coords(state, direction)
+
+        if new_worker_coords in state.boxes:
+            new_boxes_coords = self.update_boxes_coords(state, new_worker_coords, direction)
         else:
-            new_boxes_coords = self.state.boxes
-            
-        return self.state._replace(boxes=new_boxes_coords, worker=new_worker_coords)
+            new_boxes_coords = state.boxes
 
-    def update_boxes_coords(self, old_box_coords, direction):
+        return state._replace(boxes=new_boxes_coords, worker=new_worker_coords)
+
+    def update_boxes_coords(self, state, old_box_coords, direction):
         new_box_coords = self.get_neighbor_cell_in_direction(old_box_coords, direction)
-        box_index = self.state.boxes.index(old_box_coords)
-        return tuple(new_box_coords if i == box_index else box for i, box in enumerate(self.state.boxes))
+        box_index = state.boxes.index(old_box_coords)
+        return tuple(new_box_coords if i == box_index else box for i, box in enumerate(state.boxes))
 
-    def update_worker_coords(self, direction):
-        return self.get_neighbor_cell_in_direction(self.state.worker, direction)
+    def update_worker_coords(self, state, direction):
+        return self.get_neighbor_cell_in_direction(state.worker, direction)
+    
+    #def heurustic(self, state, goal):
