@@ -1,4 +1,5 @@
 
+import math
 import search
 import sokoban
 import tabooCells
@@ -59,7 +60,8 @@ class SokobanPuzzle(search.Problem):
 
         if elem
             check if the positions at each direction from the worker is wall or box 
-            if box check if the cell one step beyond that box in the same dir is taboo, wall or other box, and determine if possible on that
+            if box check if the cell one step beyond that box in the same dir is taboo,
+              wall or other box, and determine if possible on that
             
         elif macro
             for each box, which direction can it move in based on next by taboo cells, wall or other box
@@ -107,7 +109,8 @@ class SokobanPuzzle(search.Problem):
             return False
         if candidate_cell in state.boxes:
             beyond_box_pos = self.get_neighbor_cell_in_direction(candidate_cell, dir)
-            return self.is_push_possible(beyond_box_pos, state)
+            print("Hittin the box man! l:112 soobanpuzzle")
+            return self.is_push_possible(beyond_box_pos, state) # the move is valid, put the fact that boxes gets hit is overlooked?
         return True
 
     def is_push_possible(self, beyond_box_pos, state):
@@ -171,7 +174,7 @@ class SokobanPuzzle(search.Problem):
         """
         return abs(coord1[0] - coord2[0]) + abs(coord1[1] - coord2[1])
     
-    def h(self, node):
+    def h_man(self, node):
         """
         Calculate the generalized Manhattan distance as the heuristic function h.
         
@@ -195,3 +198,44 @@ class SokobanPuzzle(search.Problem):
             total_distance += min_distance_to_any_target
         
         return total_distance
+    
+    def euclidean_distance(self, point1, point2):
+        """
+        Calculate the Euclidean distance between two points.
+
+        Parameters:
+        - point1: Tuple (x1, y1) representing the coordinates of the first point
+        - point2: Tuple (x2, y2) representing the coordinates of the second point
+
+        Returns:
+        - float: Euclidean distance between the two points
+        """
+        x1, y1 = point1
+        x2, y2 = point2
+        return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+
+    def h_euclid(self, node):
+        """
+        Calculate the generalized Euclidean distance as the heuristic function h.
+
+        Parameters:
+        - node: Current search node
+
+        Returns:
+        - float: Generalized Euclidean distance
+        """
+        boxes = node.state.boxes
+        targets = node.state.targets
+
+        total_distance = 0
+
+        for box in boxes:
+            min_distance_to_any_target = float('inf')
+            for target in targets:
+                distance = self.euclidean_distance(box, target)
+                min_distance_to_any_target = min(min_distance_to_any_target, distance)
+            total_distance += min_distance_to_any_target
+
+        return total_distance
+
+    
