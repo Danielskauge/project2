@@ -57,4 +57,4 @@ def solve_sokoban_elem(warehouse):
     if solution_actions_sequence is not None:
         return solution_actions_sequence
 
-    return 'Impossible'
+    return 'Impossible' # skill issue..
