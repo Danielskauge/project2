@@ -52,7 +52,7 @@ class TestCheckActionSeq(unittest.TestCase):
     def test_push_to_taboo(self):
         action_seq = ['Down', 'Right']  # Moves worker down and right, pushing a box intp taboo cell
         result = check_action_seq(self.warehouse, action_seq)
-        excepted_result = '####  \n# .#  \n#  ###\n#*   #\n#  $ #\n#  ###\n####  ' #still move box bug. so just removed the worker;)
+        excepted_result = '####  \n# .#  \n#  ###\n#*   #\n# $. #\n#  ###\n####  ' #still move box bug. so just removed the worker;)
         self.assertNotEqual(result, 'Failure')
         self.assertEqual(result, excepted_result)
 

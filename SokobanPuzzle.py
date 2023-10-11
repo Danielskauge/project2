@@ -109,7 +109,7 @@ class SokobanPuzzle(search.Problem):
             return False
         if candidate_cell in state.boxes:
             beyond_box_pos = self.get_neighbor_cell_in_direction(candidate_cell, dir)
-            print("Hittin the box man! l:112 soobanpuzzle")
+            # print("Hittin the box man! l:112 soobanpuzzle")
             return self.is_push_possible(beyond_box_pos, state) # the move is valid, put the fact that boxes gets hit is overlooked?
         return True
 
@@ -174,7 +174,7 @@ class SokobanPuzzle(search.Problem):
         """
         return abs(coord1[0] - coord2[0]) + abs(coord1[1] - coord2[1])
     
-    def h_man(self, node):
+    def h(self, node):
         """
         Calculate the generalized Manhattan distance as the heuristic function h.
         

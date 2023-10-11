@@ -3,7 +3,7 @@
 #### TODO: 
 - [X?] finnish check_actions
     - [ ] make shit and run in-file
-- [ ] run unit tests
+- [X] run unit tests
 - [ ] make and run integration test
 - [ ] test the different algos
 - [ ] collectin into notebook

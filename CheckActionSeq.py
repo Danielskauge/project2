@@ -41,8 +41,12 @@ def check_action_seq(warehouse, action_seq):
             action,
             puzzel.state
         ):
+          
+          print(f"puzzle before {puzzel.state.boxes}")
           puzzel.state = puzzel.result(puzzel.state, action)
-          warehouse = warehouse.copy(worker=puzzel.state.worker)
+          print(f"puzzle after {puzzel.state.boxes}")
+          warehouse = warehouse.copy(worker=puzzel.state.worker, 
+                                     boxes=puzzel.state.boxes)
         else: 
            return 'Failure'
     
