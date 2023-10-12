@@ -56,4 +56,4 @@ def solve_sokoban_elem(warehouse, search_algorithm=breadth_first_graph_search):
     if solution_actions_sequence is not None:
         return solution_actions_sequence.solution()
 
-    return 'Impossible'
+    return 'Impossible' # skill issue..
