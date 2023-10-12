@@ -20,7 +20,6 @@ def solve_sokoban_macro(warehouse, search_algorithm=breadth_first_graph_search, 
     if problem.goal_test(problem.initial): 
         return []
 
-    # Depending on the search algorithm, provide appropriate arguments
     solution_actions_sequence = search_algorithm(problem)
 
     if solution_actions_sequence:
@@ -29,7 +28,7 @@ def solve_sokoban_macro(warehouse, search_algorithm=breadth_first_graph_search, 
     return 'Impossible'
 
 
-def solve_sokoban_elem(warehouse):
+def solve_sokoban_elem(warehouse, search_algorithm=breadth_first_graph_search):
     #
     '''    
     This function should solve using elementary actions 
@@ -52,9 +51,9 @@ def solve_sokoban_elem(warehouse):
     if problem.goal_test(problem.initial):
         return []
 
-    solution_actions_sequence = breadth_first_graph_search(problem)
+    solution_actions_sequence = search_algorithm(problem)
 
     if solution_actions_sequence is not None:
-        return solution_actions_sequence
+        return solution_actions_sequence.solution()
 
     return 'Impossible'
