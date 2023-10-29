@@ -21,6 +21,7 @@ def taboo_cells(warehouse):
        The returned string should NOT have marks for the worker, the targets,
        and the boxes.  
     '''
+        print('newest')
         max_x, max_y = get_warehouse_dims(warehouse)
 
         warehouse_grid = [[' ' for _ in range(max_x + 1)] for _ in range(max_y + 1)]
@@ -35,7 +36,6 @@ def taboo_cells(warehouse):
                                 warehouse_grid[y][x] = 'X'
                         elif is_between_corners_without_targets(x,y, warehouse.targets, warehouse_grid):
                                 warehouse_grid[y][x] = 'X'
-
         return warehouse_grid_to_string(warehouse_grid)
 
 def get_taboo_cells_positions(warehouse):
@@ -47,18 +47,18 @@ def get_taboo_cells_positions(warehouse):
 
      
 def is_corner(x, y, warehouse_grid):
-    if not is_within_grid(x, y, warehouse_grid):
+    if not is_within_walls(x, y, warehouse_grid):
         return False
     if warehouse_grid[y][x] == '#':
         return False
 
-    top = is_within_grid(
+    top = is_within_bounds(
         x, y-1, warehouse_grid) and warehouse_grid[y-1][x] == '#'
-    bottom = is_within_grid(
+    bottom = is_within_bounds(
         x, y+1, warehouse_grid) and warehouse_grid[y+1][x] == '#'
-    left = is_within_grid(
+    left = is_within_bounds(
         x-1, y, warehouse_grid) and warehouse_grid[y][x-1] == '#'
-    right = is_within_grid(
+    right = is_within_bounds(
         x+1, y, warehouse_grid) and warehouse_grid[y][x+1] == '#'
 
     return (top and left) or (top and right) or (bottom and left) or (bottom and right)
@@ -94,14 +94,14 @@ def range_between_corners(x, y, axis, warehouse_grid):
 
     if axis == 'x':
         for dx in range(x, -1, -1):
-            if not is_within_grid(dx, y, warehouse_grid):
+            if not is_within_bounds(dx, y, warehouse_grid):
                 break
             if is_corner(dx, y, warehouse_grid):
                 left_corner = dx
                 break
 
         for dx in range(x, len(warehouse_grid[0])):
-            if not is_within_grid(dx, y, warehouse_grid):
+            if not is_within_bounds(dx, y, warehouse_grid):
                 break
             if is_corner(dx, y, warehouse_grid):
                 right_corner = dx
@@ -109,14 +109,14 @@ def range_between_corners(x, y, axis, warehouse_grid):
 
     elif axis == 'y':
         for dy in range(y, -1, -1):
-            if not is_within_grid(x, dy, warehouse_grid):
+            if not is_within_bounds(x, dy, warehouse_grid):
                 break
             if is_corner(x, dy, warehouse_grid):
                 top_corner = dy
                 break
 
         for dy in range(y, len(warehouse_grid)):
-            if not is_within_grid(x, dy, warehouse_grid):
+            if not is_within_bounds(x, dy, warehouse_grid):
                 break
             if is_corner(x, dy, warehouse_grid):
                 bottom_corner = dy
@@ -168,28 +168,28 @@ def between_vertical_corners(x, y, warehouse_grid):
 
 
 def is_continuous_wall_top(x,y, x_range, warehouse_grid):
-    if not is_within_grid(x,y-1,warehouse_grid): 
+    if not is_within_bounds(x,y-1,warehouse_grid): 
         return False
     else:
         return all(warehouse_grid[y-1][dx] == '#' for dx in x_range)
 
 
 def is_continuous_wall_bottom(x,y, x_range, warehouse_grid):
-    if not is_within_grid(x,y+1,warehouse_grid): 
+    if not is_within_bounds(x,y+1,warehouse_grid): 
         return False
     else:
         return all(warehouse_grid[y+1][dx] == '#' for dx in x_range)
 
 
 def is_continuous_wall_left(x,y,y_range, warehouse_grid):
-    if not is_within_grid(x-1,y,warehouse_grid): 
+    if not is_within_bounds(x-1,y,warehouse_grid): 
         return False
     else:
         return all(warehouse_grid[dy][x-1] == '#' for dy in y_range)
 
 
 def is_continuous_wall_right(x,y,y_range, warehouse_grid):
-    if not is_within_grid(x+1,y,warehouse_grid): 
+    if not is_within_bounds(x+1,y,warehouse_grid): 
         return False
     else:
         return all(warehouse_grid[dy][x+1] == '#' for dy in y_range)
@@ -215,5 +215,28 @@ def warehouse_grid_to_string(warehouse_grid):
     return warehouse_string
 
 
-def is_within_grid(x, y, warehouse_grid):
-    return 0 <= x < len(warehouse_grid[0]) and 0 <= y < len(warehouse_grid)
+def is_within_walls(x, y, warehouse_grid):
+    # Check if coordinates are within the grid bounds
+    if not (0 <= x < len(warehouse_grid[0]) and 0 <= y < len(warehouse_grid)):
+        return False
+    
+    # Directions: up, down, left, right
+    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+    
+    for dx, dy in directions:
+        nx, ny = x + dx, y + dy
+        while 0 <= nx < len(warehouse_grid[0]) and 0 <= ny < len(warehouse_grid):
+            if warehouse_grid[ny][nx] == '#':  # Hit a wall
+                break
+            nx, ny = nx + dx, ny + dy
+        else:
+            # If we've exited the while loop without hitting a wall, the cell is outside
+            return False
+
+    # If all directions hit a wall, the cell is inside
+    return True
+
+def is_within_bounds(x,y,warehouse_grid):
+   return (0 <= x < len(warehouse_grid[0]) and 0 <= y < len(warehouse_grid))
+        
+    
