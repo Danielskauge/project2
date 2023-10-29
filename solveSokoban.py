@@ -23,9 +23,11 @@ def solve_sokoban_macro(warehouse, search_algorithm=breadth_first_graph_search, 
     solution_actions_sequence = search_algorithm(problem)
 
     if solution_actions_sequence:
-        return solution_actions_sequence.solution()
+        solution = solution_actions_sequence.solution()
+        reversed_coords_solution = [((y, x), direction) for (x, y), direction in solution]
+        return reversed_coords_solution
     
-    return 'Impossible'
+    return ['Impossible']
 
 
 def solve_sokoban_elem(warehouse, search_algorithm=breadth_first_graph_search):
@@ -53,7 +55,7 @@ def solve_sokoban_elem(warehouse, search_algorithm=breadth_first_graph_search):
 
     solution_actions_sequence = search_algorithm(problem)
 
-    if solution_actions_sequence is not None:
+    if solution_actions_sequence:
         return solution_actions_sequence.solution()
 
-    return 'Impossible' # skill issue..
+    return ['Impossible'] 

@@ -75,7 +75,11 @@ class SokobanPuzzle(search.Problem):
         
     def macro_actions(self, state):
         actions = []
-        directions = ['left', 'up', 'right', 'down']
+        directions = ['Left', 'Up', 'Right', 'Down']
+        self.warehouse.state = state #update the state to the most recent move
+        self.warehouse.walls = state.walls
+        self.warehouse.worker = state.worker
+        self.warehouse.boxes = state.boxes
         for box in state.boxes:
             for dir in directions:
                 if self.is_valid_macro_action(box, dir, state):
@@ -91,11 +95,12 @@ class SokobanPuzzle(search.Problem):
         if candidate_cell in self.taboo_cells and not self.allow_taboo_push:
             return False
         worker_push_position = self.get_worker_push_position(box, dir)
+        worker_push_position = (worker_push_position[1], worker_push_position[0])
         return can_go_there(self.warehouse, worker_push_position)
 
     def elementary_actions(self, state):
         actions = []
-        directions = ['left', 'up', 'right', 'down']
+        directions = ['Left', 'Up', 'Right', 'Down']
         for dir in directions:
             if self.is_valid_elementary_action(state.worker, dir, state):
                 actions.append(dir)
@@ -119,18 +124,18 @@ class SokobanPuzzle(search.Problem):
     
     def get_neighbor_cell_in_direction(self,cell,dir):
         return {
-                'left': (cell[0]-1,cell[1]),
-                'right': (cell[0]+1,cell[1]),
-                'up': (cell[0],cell[1]-1),
-                'down': (cell[0],cell[1]+1)
+                'Left': (cell[0]-1,cell[1]),
+                'Right': (cell[0]+1,cell[1]),
+                'Up': (cell[0],cell[1]-1),
+                'Down': (cell[0],cell[1]+1)
             }.get(dir)
     
     def get_worker_push_position(self, box,dir):
         return {
-            'left': (box[0]+1,box[1]),
-            'right': (box[0]-1,box[1]),
-            'up': (box[0],box[1]+1),
-            'down': (box[0],box[1]-1)
+            'Left': (box[0]+1,box[1]),
+            'Right': (box[0]-1,box[1]),
+            'Up': (box[0],box[1]+1),
+            'Down': (box[0],box[1]-1)
         }.get(dir)
     
     def result(self, state, action):

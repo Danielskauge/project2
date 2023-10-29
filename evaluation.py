@@ -62,7 +62,7 @@ def evaluate_warehouse(filename, solver, search_algorithm, timeout=10):
     return entry
 
 # This function evaluates multiple warehouses using different configurations of solvers and search algorithms
-def evaluate_search_algorithms(search_algorithms, warehouse_count, solver_choice='None'):
+def evaluate_search_algorithms(search_algorithms, warehouse_count, solver_choice,timeout):
     results = defaultdict(list)
 
     # Get list of warehouse files
@@ -79,7 +79,7 @@ def evaluate_search_algorithms(search_algorithms, warehouse_count, solver_choice
             for search_algorithm in search_algorithms:
                 print('algo: ', search_algorithm)
                 full_path = os.path.join('warehouses', warehouse_filename)
-                entry = evaluate_warehouse(full_path, solver, search_algorithm)
+                entry = evaluate_warehouse(full_path, solver, search_algorithm,timeout)
                 results[warehouse_filename].append(entry)
 
     return results

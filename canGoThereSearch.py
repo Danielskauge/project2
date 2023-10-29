@@ -59,6 +59,8 @@ def can_go_there(warehouse, dst):
       True if the worker can walk to cell dst=(row,column) without pushing any box
       False otherwise
     '''
+    dst = (dst[1], dst[0])
+
     if not warehouse.is_in_warehouse(dst):
         return False
     sub_problem = CanGoThereSearch(warehouse, dst)

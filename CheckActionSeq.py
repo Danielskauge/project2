@@ -32,10 +32,8 @@ def check_action_seq(warehouse, action_seq):
                string returned by the method  Warehouse.__str__()
     '''
     
-    ##         "INSERT YOUR CODE HERE"
     puzzel = SokobanPuzzle(warehouse, allow_taboo_push=True, macro=False)
     for action in action_seq:
-        action = action.lower()
         if puzzel.is_valid_elementary_action(
             puzzel.state.worker,
             action,
