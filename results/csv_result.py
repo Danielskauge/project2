@@ -1,10 +1,11 @@
-import os
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pandas as pd
 import json
 
 def create_dateframe():
     # Load data from the JSON file
-    with open("result_all_m.json", "r") as file:
+    with open("result_all_e.json", "r") as file:
         data = json.load(file)
 
     # Create a DataFrame for easy table display and manipulation

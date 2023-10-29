@@ -39,26 +39,25 @@ def plot_algorithm_results(df):
     warehouse_colors = plt.cm.jet(np.linspace(0, 1, len(warehouses)))
     
     for algorithm in algorithms:
-        plt.figure(figsize=(16, 4))  # Adjust figure size as needed
-        current_positions = np.arange(len(warehouses))
+        plt.figure(figsize=(16, 4))
         heights = []
         labels = []
         colors = []
         
-        for wh_index, warehouse in enumerate(warehouses):
+        for warehouse in warehouses:
             warehouse_data = df[(df['Algorithm'] == algorithm) & (df['Warehouse'] == warehouse)]
             
             if not warehouse_data.empty:
                 steps = warehouse_data['Steps'].values[0]
-                
-                # Skip plotting failed warehouses
-                if steps == -1:
-                    heights.append(0)
-                else:
-                    heights.append(steps)
-                labels.append(warehouse)
-                colors.append(warehouse_colors[wh_index % len(warehouse_colors)])  # Cycling through colors
-                
+                heights.append(steps)
+            else:
+                heights.append(0)  # Append 0 if no data for the warehouse
+            
+            labels.append(warehouse)
+            wh_index = warehouses.index(warehouse)  # Get index of warehouse
+            colors.append(warehouse_colors[wh_index % len(warehouse_colors)])  # Cycling through colors
+        
+        current_positions = np.arange(len(labels))
         plt.bar(current_positions, heights, width=1, color=colors, align='center')  # Set width to 1
         plt.title(f'Steps Taken by {algorithm} Algorithm per Warehouse')
         plt.xticks(current_positions, labels, rotation=45, ha='right')
